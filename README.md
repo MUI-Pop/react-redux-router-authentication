@@ -1,2 +1,2 @@
 # react-redux-router-authentication
-Complete Token based authentication example in React + Redux + Router
+Example of a Token based authentication on frontend using React + Redux + Router
