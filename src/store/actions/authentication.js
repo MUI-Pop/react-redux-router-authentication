@@ -20,12 +20,29 @@ const authFailed = (error) => {
     }
 }
 
-const authSuccess = (accessToken, userId) => {
+const authSuccess = () => {
     return {
         type: ACTIONTYPES.AUTH_SUCCESS,
-        accessToken,
-        userId
     }
+}
+
+const monitorTokenExpiry = () => {
+    const tokenExpiresAt = localStorage.getItem('expires_at');
+
+    if(new Date().getTime > tokenExpiresAt){
+        localStorage.clear();
+        
+        return{
+            type: ACTIONTYPES.AUTH_EXPIRED
+        }
+    }
+}
+
+const loggedIn = (accessToken, userId, expires_at) => {
+    localStorage.clear();
+    localStorage.setItem('token',accessToken);
+    localStorage.setItem('userId',userId);
+    localStorage.setItem('expires_at',expires_at);
 }
 
 export const authenticate = (username, password, client_id = CLIENT_ID, client_secret = CLIENT_SECRET, grant_type = GRANT_TYPE) => {
@@ -33,7 +50,7 @@ export const authenticate = (username, password, client_id = CLIENT_ID, client_s
     return (dispatch) => {
         dispatch(authStart());
 
-        let searchParams = new URLSearchParams();
+        const searchParams = new URLSearchParams();
         searchParams.set('username', username);
         searchParams.set('password', password);
         searchParams.set('grant_type', grant_type);
@@ -42,10 +59,9 @@ export const authenticate = (username, password, client_id = CLIENT_ID, client_s
 
         axios.post(`${API_BASE_URL}/api/login`, searchParams)
             .then(response => {
-                console.log(response);
-                dispatch(authSuccess(response.data.accessToken, response.data.user.loginId));
+                loggedIn(response.data.accessToken, response.data.user.loginId, response.data.expires_at);
+                dispatch(authSuccess());
             }).catch(e => {
-                console.log(e);
                 dispatch(authFailed(e));
             })
     }

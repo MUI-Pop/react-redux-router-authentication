@@ -15,53 +15,99 @@ import * as signUp from '../../store/actions/signup';
 class SignUpForm extends Component {
 
     state = {
-        firstName: null,
-        lastName: null,
-        email: null,
+        firstName: {
+            value: '',
+            touched: false
+        },
+        lastName: {
+            value: '',
+            touched: false
+        },
+        email: {
+            value: '',
+            touched: false
+        },
         Login: {
-            loginId: null,
-            password: null
+            loginId: {
+                value: '',
+                touched: false
+            },
+            password: {
+                value: '',
+                touched: false
+            },
         },
     }
 
     onFieldChange = (fieldName, e) => {
         e.preventDefault();
-        switch(fieldName){
+        switch (fieldName) {
+
             case 'firstName':
                 this.setState({
                     ...this.state,
                     ...this.state.Login,
-                    firstName: e.target.value
+                    firstName: {
+                        ...this.state.firstName,
+                        value: e.target.value,
+                        touched: true
+                    }
                 });
                 break;
+
             case 'lastName':
                 this.setState({
                     ...this.state,
                     ...this.state.Login,
-                    lastName: e.target.value
+                    lastName: {
+                        ...this.state.lastName,
+                        value: e.target.value,
+                        touched: true
+                    }
                 });
                 break;
+
             case 'email':
                 this.setState({
                     ...this.state,
                     ...this.state.Login,
-                    email: e.target.value
+                    email: {
+                        ...this.state.email,
+                        value: e.target.value,
+                        touched: true
+                    }
                 });
                 break;
+
             case 'loginId':
                 let login_loginId = {
                     ...this.state.Login,
-                    loginId: e.target.value,
+                    loginId: {
+                        ...this.state.Login.loginId,
+                        value: e.target.value,
+                        touched: true
+                    },
+                    password: {
+                        ...this.state.Login.password,
+                    }
                 };
                 this.setState({
                     ...this.state,
                     Login: login_loginId
                 });
                 break;
+
             case 'password':
                 let login_password = {
                     ...this.state.Login,
-                    password: e.target.value,
+                    password: {
+                        ...this.state.Login.password,
+                        value: e.target.value,
+                        touched: true
+                    },
+                    loginId: {
+                        ...this.state.Login.loginId,
+                    }
                 };
                 this.setState({
                     ...this.state,
@@ -73,56 +119,98 @@ class SignUpForm extends Component {
 
     signUp = (e) => {
         e.preventDefault();
-        this.props.signUp(this.state);
+        this.props.signUp(this.state.firstName.value, this.state.lastName.value, this.state.email.value, this.state.Login.loginId.value, this.state.Login.password.value);
     }
 
     render = () => {
 
         return (
             <div className="signup-form">
-                <h1>Sign Up</h1>
                 <form onSubmit={this.signUp} >
-                    <Label>FirstName</Label>
+                    <Label>Firstname</Label>
                     <InputBox
                         type="textbox"
                         placeholder="Enter your FirstName"
-                        required="true"
-                        value={this.state.firstName}
-                        onChange={(e) => this.onFieldChange('firstName',e)}
+                        value={this.state.firstName.value}
+                        onChange={(e) => this.onFieldChange('firstName', e)}
                     />
-                    <Label>LastName</Label>
+                    {(this.state.firstName.value === '' && this.state.firstName.touched) ?
+                        <div>
+                            <b>
+                                <font color="red">Firstname is required</font>
+                            </b>
+                        </div>
+                        :
+                        null}
+                    <Label>Lastname</Label>
                     <InputBox
                         type="textbox"
                         placeholder="Enter your LastName"
-                        required="true"
-                        value={this.state.lastName}
-                        onChange={(e) => this.onFieldChange('lastName',e)}
+                        value={this.state.lastName.value}
+                        onChange={(e) => this.onFieldChange('lastName', e)}
                     />
+                    {(this.state.lastName.value === '' && this.state.lastName.touched) ?
+                        <div>
+                            <b>
+                                <font color="red">Lastname is required</font>
+                            </b>
+                        </div>
+                        :
+                        null}
                     <Label>Email</Label>
                     <InputBox
                         type="textbox"
                         placeholder="Enter your Email"
-                        required="true"
-                        value={this.state.email}
-                        onChange={(e) => this.onFieldChange('email',e)}
+                        value={this.state.email.value}
+                        onChange={(e) => this.onFieldChange('email', e)}
                     />
-                    <Label>UserName</Label>
+                    {(this.state.email.value === '' && this.state.email.touched) ?
+                        <div>
+                            <b>
+                                <font color="red">Email is required</font>
+                            </b>
+                        </div>
+                        :
+                        null}
+                    <Label>Username</Label>
                     <InputBox
                         type="textbox"
-                        placeholder="Enter your UserName"
-                        required="true"
-                        value={this.state.Login.loginId}
-                        onChange={(e) => this.onFieldChange('loginId',e)}
+                        placeholder="Enter your Username"
+                        value={this.state.Login.loginId.value}
+                        onChange={(e) => this.onFieldChange('loginId', e)}
                     />
+                    {(this.state.Login.loginId.value === '' && this.state.Login.loginId.touched) ?
+                        <div>
+                            <b>
+                                <font color="red">Username is required</font>
+                            </b>
+                        </div>
+                        :
+                        null}
                     <Label>Password</Label>
                     <InputBox
                         type="password"
                         placeholder="Enter your Password"
-                        required="true"
-                        value={this.state.Login.password}
-                        onChange={(e) => this.onFieldChange('password',e)}
+                        value={this.state.Login.password.value}
+                        onChange={(e) => this.onFieldChange('password', e)}
                     />
-                    <Button >Sign Up</Button>
+                    {(this.state.Login.password.value === '' && this.state.Login.password.touched) ?
+                        <div>
+                            <b>
+                                <font color="red">Password is required</font>
+                            </b>
+                        </div>
+                        :
+                        null}
+                    <Button>Get Started</Button>
+                    {this.props.error ?
+                        <div>
+                            <b>
+                                <font color="red">{this.props.error}</font>
+                            </b>
+                        </div>
+                        :
+                        null}
                 </form>
             </div>
         )
@@ -139,7 +227,7 @@ const stateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        signUp: (signUpObj) => dispatch(signUp.signUp(signUpObj))
+        signUp: (firstName, lastName, email, loginId, password) => dispatch(signUp.signUp(firstName, lastName, email, loginId, password))
     }
 }
 

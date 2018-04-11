@@ -26,18 +26,27 @@ const signUpSuccess = () => {
     }
 }
 
-export const signUp = (signUpObj) => {
+export const signUp = (firstName, lastName, email, loginId, password) => {
+
+    const signUpObj = {
+        firstName,
+        lastName,
+        email,
+        Login: {
+            loginId,
+            password
+        }
+    };
 
     return (dispatch) => {
         dispatch(signUpStart());
 
         axios.post(`${API_BASE_URL}/api/profiles`, signUpObj)
             .then(response => {
-                console.log(response);
                 dispatch(signUpSuccess());
             }).catch(e => {
                 console.log(e);
-                dispatch(signUpFailed(e));
+                dispatch(signUpFailed(e.response.data.errors[0].message));
             })
     }
 }

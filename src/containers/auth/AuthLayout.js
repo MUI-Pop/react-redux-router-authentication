@@ -5,62 +5,37 @@ import React, { Component } from 'react';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 
-import { Route, Switch, withRouter } from 'react-router-dom';
-
-import Button from '../../components/UI/Button';
-
 class AuthLayout extends Component {
 
     state = {
-        showLogin: true
+        isLoginActive: true
     }
 
-    renderLoginOrSignUp = () => {
-        if (this.state.showLogin) {
-            this.props.history.push('/login')
+    renderLoginOrSignUp = (e, btnName) => {
+        if (btnName === 'login') {
             this.setState({
                 ...this.state,
-                showLogin: false
+                isLoginActive: true
             })
         } else {
-            this.props.history.push('/signup');
             this.setState({
                 ...this.state,
-                showLogin: true
+                isLoginActive: false
             })
         }
     }
 
-    componentDidMount = () => {
-        this.props.history.push('/login');
-        this.setState({
-            ...this.state,
-            showLogin: false
-        })
-    }
-
     render = () => {
-
-        const buttonText = this.state.showLogin ? 'Login' : 'Sign Up';
-        const buttonClass = this.state.showLogin ? { 'margin-top' : '610px' } : { 'margin-top' : '500px' }
-
         return (
-            <div>
-                <div>
-                    <Switch>
-                        <Route path="/login" component={LoginForm} />
-                        <Route path="/signup" component={SignUpForm} />
-                    </Switch>
-                </div>
-                <div className="auth-layout"  style={buttonClass}>
-                <h1>-OR-</h1>
-                    <Button onClick={this.renderLoginOrSignUp}>
-                        {buttonText}
-                    </Button>
-                </div>
+            <div className="auth-layout">
+                <ul className="tab-group">
+                    <li className="tab"><a onClick={(e) => this.renderLoginOrSignUp(e, 'login')}>Log In</a></li>
+                    <li className="tab"><a onClick={(e) => this.renderLoginOrSignUp(e, 'signup')}>Sign Up</a></li>
+                </ul>
+                {this.state.isLoginActive ? <LoginForm /> : <SignUpForm />}
             </div>
         )
     }
 }
 
-export default withRouter(AuthLayout);
+export default AuthLayout;

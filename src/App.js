@@ -4,9 +4,11 @@ import React, { Component } from 'react';
 //CSS import
 import './App.css';
 
-import { withRouter } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
 import AuthLayout from './containers/auth/AuthLayout';
+import HomePage from './containers/HomePage';
+import ProtectedRouteHOC from './containers/hoc/ProtectedRoute';
 
 class App extends Component {
   render() {
@@ -14,7 +16,12 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
         </header>
-        <AuthLayout />
+
+        <Switch>
+          <Route exact path="/auth" component={AuthLayout} />
+          <Route exact path="/" component={ProtectedRouteHOC(HomePage)} />
+        </Switch>
+
       </div>
     );
   }

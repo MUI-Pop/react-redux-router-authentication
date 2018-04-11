@@ -1,11 +1,9 @@
 import * as ACTIONTYPES from '../actions/actionTypes';
 
 const initialState = {
-    accessToken: null,
-    errored: null,
     loading: false,
-    userId: null,
-    error: null
+    error: null,
+    isAuthenticated: false
 }
 
 const reducer = (state = initialState, action) => {
@@ -14,7 +12,6 @@ const reducer = (state = initialState, action) => {
         case ACTIONTYPES.AUTH_FAILED:
             return {
                 ...state,
-                errored: true,
                 loading: false,
                 error: action.error
             }
@@ -28,11 +25,16 @@ const reducer = (state = initialState, action) => {
         case ACTIONTYPES.AUTH_SUCCESS:
             return {
                 ...state,
-                accessToken: action.accessToken,
-                userId: action.userId,
                 loading: false,
+                isAuthenticated: true
             }
 
+        case ACTIONTYPES.AUTH_EXPIRED:
+            return {
+                ...state,
+                isAuthenticated: false
+            }
+            
         default:
             return state;
     }
